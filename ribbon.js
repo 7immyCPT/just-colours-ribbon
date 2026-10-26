@@ -48,7 +48,7 @@
     /* Decided by the product's SupplyFlag (via the status list), NOT by what the button currently says:
      * any "pre-order" wording Ecwid puts on a supplier-stocked product is rewritten, including
      * "Pre-Order more" and "Pre-ordered items in the bag: 1" once it is in the cart. */
-    var els = root.querySelectorAll("button, button *, .details-product-purchase__place, .grid-product__hover-wrap *");
+    var els = root.querySelectorAll("button, button *, .details-product-purchase__place, .product-details-module__title, .grid-product__hover-wrap *");
     for (var i = 0; i < els.length; i++) {
       var e = els[i];
       if (e.children.length) continue;
