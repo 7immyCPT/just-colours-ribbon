@@ -60,25 +60,26 @@
       else out = t.replace(/pre-?order(ed)?/i, BTN_TEXT);
       if (out !== t) e.textContent = out;
     }
-    /* Already in the bag: Ecwid re-renders its own "Pre-ordered items in the bag: N" line, so rather than
-     * fight it we hide that line and show our own "Items in the bag: N" plus the supplier notice. */
+    /* Ecwid re-renders its own status line (and puts "pre-order" back), so rather than fight it we hide that
+     * line and show our own: the supplier notice, plus "Items in the bag: N" once it is in the bag. */
     var place = root.querySelector(".details-product-purchase__place");
     var mine = root.querySelector("[data-jc-note]");
-    var inBag = place && !place.hasAttribute("data-jc-note") && /items in the bag/i.test(place.textContent);
-    if (inBag) {
-      var cnt = (place.textContent.match(/(\d+)\s*$/) || [, ""])[1];
+    var txt = place && !place.hasAttribute("data-jc-note") ? place.textContent : "";
+    var inBag = /items in the bag/i.test(txt);
+    var oos = /out of stock, available for pre-?order/i.test(txt);
+    if (place && (inBag || oos)) {
+      var cnt = inBag ? (txt.match(/(\d+)\s*$/) || [, ""])[1] : "";
       place.classList.add("jc-hide-native");
       if (!mine || mine.getAttribute("data-n") !== cnt) {
         if (mine) mine.remove();
         mine = document.createElement("div");
         mine.className = place.className.replace("jc-hide-native", "");
         mine.setAttribute("data-jc-note", "1"); mine.setAttribute("data-n", cnt);
-        mine.innerHTML = "<span></span><br><span></span>";
-        mine.firstChild.textContent = "Items in the bag: " + cnt;
-        mine.lastChild.textContent = NOTE_TEXT;
+        if (inBag) { mine.innerHTML = "<span></span><br><span></span>"; mine.firstChild.textContent = "Items in the bag: " + cnt; mine.lastChild.textContent = NOTE_TEXT; }
+        else mine.textContent = NOTE_TEXT;
         place.parentNode.insertBefore(mine, place);
       }
-    } else if (mine) { mine.remove(); if (place) place.classList.remove("jc-hide-native"); }
+    } else if (mine && place && !place.classList.contains("jc-hide-native")) { mine.remove(); }
   }
 
   function apply(root, id, nativeSel, host, extra) {
