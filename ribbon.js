@@ -60,15 +60,25 @@
       else out = t.replace(/pre-?order(ed)?/i, BTN_TEXT);
       if (out !== t) e.textContent = out;
     }
-    /* In the bag the notice line is gone, so show the supplier notice under the "Items in the bag" line. */
+    /* Already in the bag: Ecwid re-renders its own "Pre-ordered items in the bag: N" line, so rather than
+     * fight it we hide that line and show our own "Items in the bag: N" plus the supplier notice. */
     var place = root.querySelector(".details-product-purchase__place");
-    if (place && /items in the bag/i.test(place.textContent) && !root.querySelector("[data-jc-note]")) {
-      var n = document.createElement("div");
-      n.className = place.className; n.setAttribute("data-jc-note", "1"); n.textContent = NOTE_TEXT;
-      place.parentNode.insertBefore(n, place.nextSibling);
-    } else if (place && !/items in the bag/i.test(place.textContent)) {
-      var old = root.querySelector("[data-jc-note]"); if (old) old.remove();
-    }
+    var mine = root.querySelector("[data-jc-note]");
+    var inBag = place && !place.hasAttribute("data-jc-note") && /items in the bag/i.test(place.textContent);
+    if (inBag) {
+      var cnt = (place.textContent.match(/(\d+)\s*$/) || [, ""])[1];
+      place.classList.add("jc-hide-native");
+      if (!mine || mine.getAttribute("data-n") !== cnt) {
+        if (mine) mine.remove();
+        mine = document.createElement("div");
+        mine.className = place.className.replace("jc-hide-native", "");
+        mine.setAttribute("data-jc-note", "1"); mine.setAttribute("data-n", cnt);
+        mine.innerHTML = "<span></span><br><span></span>";
+        mine.firstChild.textContent = "Items in the bag: " + cnt;
+        mine.lastChild.textContent = NOTE_TEXT;
+        place.parentNode.insertBefore(mine, place);
+      }
+    } else if (mine) { mine.remove(); if (place) place.classList.remove("jc-hide-native"); }
   }
 
   function apply(root, id, nativeSel, host, extra) {
