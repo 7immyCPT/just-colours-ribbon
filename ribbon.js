@@ -57,6 +57,7 @@
       var out;
       if (/^out of stock, available for pre-?order$/i.test(t)) out = NOTE_TEXT;
       else if (/pre-?ordered items/i.test(t)) out = t.replace(/pre-?ordered items/i, "Items");
+      else if (/pre-?order\s+more/i.test(t)) out = BTN_TEXT + ". Add More";
       else out = t.replace(/pre-?order(ed)?/i, BTN_TEXT);
       if (out !== t) e.textContent = out;
     }
