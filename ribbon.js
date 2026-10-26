@@ -24,8 +24,8 @@
   css.textContent =
     ".ec-size .ec-store .jc-hide-native{display:none!important}" +
     ".ec-size .ec-store .jc-ribbon{display:inline-block!important;padding:3px 9px!important;border-radius:3px!important;" +
-    "font:600 12px/1.3 sans-serif!important;color:#fff!important;letter-spacing:.2px!important;pointer-events:none!important}" +
-    ".ec-size .ec-store .jc-ribbon.jc-ribbon-card{position:absolute!important;top:8px!important;left:8px!important;z-index:9!important}" +
+    "font:600 12px/1.3 sans-serif!important;white-space:nowrap!important;width:auto!important;max-width:none!important;color:#fff!important;letter-spacing:.2px!important;pointer-events:none!important}" +
+    ".ec-size .ec-store .jc-ribbon.jc-ribbon-card{position:absolute!important;top:8px!important;left:8px!important;z-index:30!important}" +
     ".ec-size .ec-store .jc-ribbon.jc-ribbon-page{position:static!important;margin:0 0 8px!important}" +
     /* Supplier / pre-order products get no discount ribbon or countdown unless allow-listed. */
     ".ec-size .ec-store .jc-supplier .jcr-ribbon,.ec-size .ec-store .jc-supplier .jcr-countdown{display:none!important}";
@@ -61,7 +61,8 @@
     var cards = document.querySelectorAll(".grid-product__wrap[data-product-id]");
     for (var i = 0; i < cards.length; i++) {
       var c = cards[i];
-      var host = c.querySelector(".grid-product__image-wrap");
+      /* Sits on the positioned image box, ABOVE Ecwid's hover overlay (hover-wrap), not inside the clipped image-wrap. */
+      var host = c.querySelector(".grid-product__image");
       /* Ecwid's image wrap is already a positioned box - leave its layout alone. */
       if (host) apply(c, c.getAttribute("data-product-id"), ".grid-product__label", host, "jc-ribbon-card");
     }
