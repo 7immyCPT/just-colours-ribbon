@@ -62,12 +62,13 @@
       if (host) apply(c, c.getAttribute("data-product-id"), ".grid-product__label", host, "jc-ribbon-card");
     }
     var pd = document.querySelector(".product-details");
-    if (pd) {
-      var cls = (pd.className.match(/product-details--id-(\d+)/) || [])[1] ||
-        (document.querySelector("[class*='product-details--id-']") || {className: ""}).className.match(/id-(\d+)/);
-      var id = Array.isArray(cls) ? cls[1] : cls;
-      var host2 = pd.querySelector(".product-details__product-title") || pd.querySelector(".product-details__top");
-      if (id && host2) apply(pd, id, ".product-details__label-container", host2.parentNode, "jc-ribbon-page");
+    var page = document.querySelector("[class*='ec-store__product-page--']");
+    if (pd && page) {
+      var m = String(page.className).match(/ec-store__product-page--(\d+)/);
+      var nat = pd.querySelector(".product-details__label-container");
+      var title = pd.querySelector(".product-details__product-title");
+      var host2 = nat ? nat.parentNode : title && title.parentNode;
+      if (m && host2) apply(pd, m[1], ".product-details__label-container", host2, "jc-ribbon-page");
     }
   }
 
