@@ -79,7 +79,7 @@
         else mine.textContent = NOTE_TEXT;
         place.parentNode.insertBefore(mine, place);
       }
-    } else if (mine && place && !place.classList.contains("jc-hide-native")) { mine.remove(); }
+    }
   }
 
   function apply(root, id, nativeSel, host, extra) {
@@ -88,6 +88,10 @@
     var old = root.querySelector("[data-jc-ribbon]");
     if (hit && !allow[id]) root.classList.add("jc-supplier"); else root.classList.remove("jc-supplier");
     if (hit && hit[0] === "supplier") reword(root);
+    if (!(hit && hit[0] === "supplier")) {
+      var stale = root.querySelector("[data-jc-note]");
+      if (stale) { stale.remove(); var pl = root.querySelector(".details-product-purchase__place"); if (pl) pl.classList.remove("jc-hide-native"); }
+    }
     if (hit) {
       if (native) native.classList.add("jc-hide-native");
       if (old && old.textContent === hit[1]) return;
