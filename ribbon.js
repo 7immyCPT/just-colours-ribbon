@@ -45,13 +45,20 @@
   var BTN_TEXT = "Shipped from Supplier";
   var NOTE_TEXT = "This product ships directly to you from our South African Supplier. Please allow 2-3 days for order processing and 3-7 days for delivery after processing.";
   function reword(root) {
-    var els = root.querySelectorAll("button *, button, .details-product-purchase__place, .grid-product__hover-wrap *");
+    /* Decided by the product's SupplyFlag (via the status list), NOT by what the button currently says:
+     * any "pre-order" wording Ecwid puts on a supplier-stocked product is rewritten, including
+     * "Pre-Order more" and "Pre-ordered items in the bag: 1" once it is in the cart. */
+    var els = root.querySelectorAll("button, button *, .details-product-purchase__place, .grid-product__hover-wrap *");
     for (var i = 0; i < els.length; i++) {
       var e = els[i];
       if (e.children.length) continue;
       var t = (e.textContent || "").trim();
-      if (/^pre-?order$/i.test(t)) e.textContent = BTN_TEXT;
-      else if (/^out of stock, available for pre-?order$/i.test(t)) e.textContent = NOTE_TEXT;
+      if (!/pre-?order/i.test(t)) continue;
+      var out;
+      if (/^out of stock, available for pre-?order$/i.test(t)) out = NOTE_TEXT;
+      else if (/pre-?ordered items/i.test(t)) out = t.replace(/pre-?ordered items/i, "Items");
+      else out = t.replace(/pre-?order(ed)?/i, BTN_TEXT);
+      if (out !== t) e.textContent = out;
     }
   }
 
