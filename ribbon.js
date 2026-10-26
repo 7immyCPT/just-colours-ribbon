@@ -40,11 +40,27 @@
     return el;
   }
 
+  /* With Ecwid's ribbon gone, supplier-stocked items fall back to Ecwid's stock "Pre-Order" wording.
+   * Restore the old supplier wording (only for state "supplier"; true pre-orders keep "Pre-Order"). */
+  var BTN_TEXT = "Shipped from Supplier";
+  var NOTE_TEXT = "This product ships directly to you from our South African Supplier. Please allow 2-3 days for order processing and 3-7 days for delivery after processing.";
+  function reword(root) {
+    var els = root.querySelectorAll("button *, button, .details-product-purchase__place, .grid-product__hover-wrap *");
+    for (var i = 0; i < els.length; i++) {
+      var e = els[i];
+      if (e.children.length) continue;
+      var t = (e.textContent || "").trim();
+      if (/^pre-?order$/i.test(t)) e.textContent = BTN_TEXT;
+      else if (/^out of stock, available for pre-?order$/i.test(t)) e.textContent = NOTE_TEXT;
+    }
+  }
+
   function apply(root, id, nativeSel, host, extra) {
     var native = root.querySelector(nativeSel);
     var hit = items && items[id];
     var old = root.querySelector("[data-jc-ribbon]");
     if (hit && !allow[id]) root.classList.add("jc-supplier"); else root.classList.remove("jc-supplier");
+    if (hit && hit[0] === "supplier") reword(root);
     if (hit) {
       if (native) native.classList.add("jc-hide-native");
       if (old && old.textContent === hit[1]) return;
