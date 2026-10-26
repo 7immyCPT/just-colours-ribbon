@@ -60,6 +60,15 @@
       else out = t.replace(/pre-?order(ed)?/i, BTN_TEXT);
       if (out !== t) e.textContent = out;
     }
+    /* In the bag the notice line is gone, so show the supplier notice under the "Items in the bag" line. */
+    var place = root.querySelector(".details-product-purchase__place");
+    if (place && /items in the bag/i.test(place.textContent) && !root.querySelector("[data-jc-note]")) {
+      var n = document.createElement("div");
+      n.className = place.className; n.setAttribute("data-jc-note", "1"); n.textContent = NOTE_TEXT;
+      place.parentNode.insertBefore(n, place.nextSibling);
+    } else if (place && !/items in the bag/i.test(place.textContent)) {
+      var old = root.querySelector("[data-jc-note]"); if (old) old.remove();
+    }
   }
 
   function apply(root, id, nativeSel, host, extra) {
