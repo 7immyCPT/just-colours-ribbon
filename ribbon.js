@@ -18,14 +18,17 @@
   var COLORS = { supplier: "#F5A623", preorder: "#2F6FDB" };
   var items = window.JC_RIBBON_ITEMS || null;
   var STALE = /supplier|drop\s?ship/i;
+  var allow = {};  /* countdown_allow.json: {"ids":["851492478", ...]} - products where a countdown IS wanted */
 
   var css = document.createElement("style");
   css.textContent =
-    ".jc-hide-native{display:none!important}" +
-    ".jc-ribbon{display:inline-block;padding:3px 9px;border-radius:3px;font:600 12px/1.3 sans-serif;" +
-    "color:#fff;letter-spacing:.2px;pointer-events:none}" +
-    ".jc-ribbon-card{position:absolute;top:8px;left:8px;z-index:5}" +
-    ".jc-ribbon-page{margin:0 0 8px}";
+    ".ec-size .ec-store .jc-hide-native{display:none!important}" +
+    ".ec-size .ec-store .jc-ribbon{display:inline-block!important;padding:3px 9px!important;border-radius:3px!important;" +
+    "font:600 12px/1.3 sans-serif!important;color:#fff!important;letter-spacing:.2px!important;pointer-events:none!important}" +
+    ".ec-size .ec-store .jc-ribbon.jc-ribbon-card{position:absolute!important;top:8px!important;left:8px!important;z-index:9!important}" +
+    ".ec-size .ec-store .jc-ribbon.jc-ribbon-page{position:static!important;margin:0 0 8px!important}" +
+    /* Supplier / pre-order products get no discount ribbon or countdown unless allow-listed. */
+    ".ec-size .ec-store .jc-supplier .jcr-ribbon,.ec-size .ec-store .jc-supplier .jcr-countdown{display:none!important}";
   document.head.appendChild(css);
 
   function tag(kind, label, extra) {
@@ -41,6 +44,7 @@
     var native = root.querySelector(nativeSel);
     var hit = items && items[id];
     var old = root.querySelector("[data-jc-ribbon]");
+    if (hit && !allow[id]) root.classList.add("jc-supplier"); else root.classList.remove("jc-supplier");
     if (hit) {
       if (native) native.classList.add("jc-hide-native");
       if (old && old.textContent === hit[1]) return;
@@ -82,7 +86,10 @@
 
   function load() {
     if (items || !CFG.url) return start();
-    fetch(CFG.url, { cache: "no-cache" }).then(function (r) { return r.json(); })
+    var allowUrl = CFG.url.replace(/status\.json.*$/, "countdown_allow.json");
+    fetch(allowUrl, { cache: "no-cache" }).then(function (r) { return r.ok ? r.json() : {}; })
+      .then(function (j) { (j.ids || []).forEach(function (i) { allow[String(i)] = 1; }); }).catch(function () {})
+      .then(function () { return fetch(CFG.url, { cache: "no-cache" }); }).then(function (r) { return r.json(); })
       .then(function (j) { items = j.items || {}; start(); })
       .catch(function () { /* no list -> do nothing, never break the shop */ });
   }

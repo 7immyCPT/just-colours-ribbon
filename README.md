@@ -8,3 +8,7 @@ lives in the SupplyFlag/Fulfillment attributes and this script draws the tag its
 - Contains no prices, stock counts or customer data.
 
 Not loaded on the live store until Byron adds the one-line script tag in Ecwid custom code.
+
+## Countdowns
+Supplier and pre-order products never show the discount ribbon or countdown (`.jcr-ribbon`, `.jcr-countdown`
+from the countdown app) unless their Ecwid product id is listed in `countdown_allow.json`, e.g. `{"ids": ["851492478"]}`.
