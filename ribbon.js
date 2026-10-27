@@ -104,7 +104,30 @@
     }
   }
 
+  /* Cart/checkout: Ecwid's own "will be pre-ordered ... shipped as soon as they are in stock" notice is wrong for
+     supplier-stocked items (the shipping method already states 2-3 + 3-7 days). Hide it only when it lists
+     supplier items and nothing else, so genuine pre-orders keep their notice. */
+  function hideCartNotice() {
+    var nodes = document.querySelectorAll("div,p,span,h2,h3");
+    for (var i = 0; i < nodes.length; i++) {
+      var h = nodes[i];
+      if (h.children.length || !/Some items are not in stock yet and will be pre-ordered/i.test(h.textContent)) continue;
+      var box = h.parentNode, guard = 0;
+      while (box && box.parentNode && guard++ < 4 && !/Supplier items:/i.test(box.textContent)) box = box.parentNode;
+      if (!box) continue;
+      var txt = box.textContent;
+      if (!/Supplier items:/i.test(txt) || /Pre-?order(ed)? items:|Out of stock items:/i.test(txt)) continue;
+      if (!box.querySelector("button,input,a") && txt.length <= 700) { box.style.display = "none"; box.setAttribute("data-jc-hidden", "1"); continue; }
+      /* The notice shares a wrapper with the Continue button: hide only the notice blocks themselves. */
+      for (var k = 0; k < box.children.length; k++) {
+        var ch = box.children[k];
+        if (!ch.querySelector("button,input,a") && ch.tagName !== "BUTTON" && /not in stock yet|Supplier items:|shipped as soon as/i.test(ch.textContent)) { ch.style.display = "none"; ch.setAttribute("data-jc-hidden", "1"); }
+      }
+    }
+  }
+
   function run() {
+    hideCartNotice();
     if (!items) return;
     var cards = document.querySelectorAll(".grid-product__wrap[data-product-id]");
     for (var i = 0; i < cards.length; i++) {
