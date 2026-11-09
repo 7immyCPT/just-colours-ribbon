@@ -27,8 +27,8 @@
     "font:600 12px/1.3 sans-serif!important;white-space:nowrap!important;width:auto!important;max-width:none!important;color:#fff!important;letter-spacing:.2px!important;pointer-events:none!important}" +
     ".ec-size .ec-store .jc-ribbon.jc-ribbon-card{position:absolute!important;top:8px!important;left:8px!important;z-index:30!important}" +
     ".ec-size .ec-store .jc-ribbon.jc-ribbon-page{position:static!important;margin:0 0 8px!important}" +
-    /* Supplier / pre-order products get no discount ribbon or countdown unless allow-listed. */
-    ".ec-size .ec-store .jc-supplier .jcr-ribbon,.ec-size .ec-store .jc-supplier .jcr-countdown{display:none!important}";
+    /* Supplier / pre-order products keep the countdown but get no percentage ribbon (it clashes with ours) unless allow-listed. */
+    ".ec-size .ec-store .jc-supplier .jcr-ribbon{display:none!important}";
   document.head.appendChild(css);
 
   function tag(kind, label, extra) {
