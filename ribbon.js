@@ -165,5 +165,15 @@
       .then(function (j) { items = j.items || {}; start(); })
       .catch(function () { /* no list -> do nothing, never break the shop */ });
   }
-  if (document.body) load(); else document.addEventListener("DOMContentLoaded", load);
+  /* Ecwid re-renders grid cards after they load, which wipes the countdown app's ribbon + countdown but leaves its
+     data-jcr marker, so the app thinks the card is done and never redraws it. Drop the marker when the overlay is gone. */
+  function healCountdown() {
+    var m = new MutationObserver(function () {
+      document.querySelectorAll("[data-jcr]").forEach(function (h) {
+        if (!h.querySelector(".jcr-ribbon,.jcr-countdown")) h.removeAttribute("data-jcr");
+      });
+    });
+    m.observe(document.body, { childList: true, subtree: true });
+  }
+  if (document.body) { healCountdown(); load(); } else document.addEventListener("DOMContentLoaded", function () { healCountdown(); load(); });
 })();
