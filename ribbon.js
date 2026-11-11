@@ -31,6 +31,8 @@
     ".ec-size .ec-store .jc-supplier .jcr-ribbon{display:none!important}" +
     /* Home-page / starter-site product tiles live outside .ec-store, so they need the same rules unscoped. */
     ".ins-tile__product-card .jc-hide-native{display:none!important}" +
+    /* Same as the category grid: supplier tiles keep the countdown but drop the percentage ribbon (it sits where ours does). */
+    ".ins-tile__product-card.jc-supplier .jcr-ribbon{display:none!important}" +
     ".ins-tile__product-card .jc-ribbon{display:inline-block!important;padding:3px 9px!important;border-radius:3px!important;" +
     "font:600 12px/1.3 sans-serif!important;white-space:nowrap!important;color:#fff!important;letter-spacing:.2px!important;pointer-events:none!important;" +
     "position:absolute!important;top:8px!important;left:8px!important;z-index:30!important}" +
