@@ -28,7 +28,13 @@
     ".ec-size .ec-store .jc-ribbon.jc-ribbon-card{position:absolute!important;top:8px!important;left:8px!important;z-index:30!important}" +
     ".ec-size .ec-store .jc-ribbon.jc-ribbon-page{position:static!important;margin:0 0 8px!important}" +
     /* Supplier / pre-order products keep the countdown but get no percentage ribbon (it clashes with ours) unless allow-listed. */
-    ".ec-size .ec-store .jc-supplier .jcr-ribbon{display:none!important}";
+    ".ec-size .ec-store .jc-supplier .jcr-ribbon{display:none!important}" +
+    /* Home-page / starter-site product tiles live outside .ec-store, so they need the same rules unscoped. */
+    ".ins-tile__product-card .jc-hide-native{display:none!important}" +
+    ".ins-tile__product-card .jc-ribbon{display:inline-block!important;padding:3px 9px!important;border-radius:3px!important;" +
+    "font:600 12px/1.3 sans-serif!important;white-space:nowrap!important;color:#fff!important;letter-spacing:.2px!important;pointer-events:none!important;" +
+    "position:absolute!important;top:8px!important;left:8px!important;z-index:30!important}" +
+    ".ins-tile__product-card .ins-tile__product-image{position:relative}";
   document.head.appendChild(css);
 
   function tag(kind, label, extra) {
@@ -136,6 +142,14 @@
       var host = c.querySelector(".grid-product__image");
       /* Ecwid's image wrap is already a positioned box - leave its layout alone. */
       if (host) apply(c, c.getAttribute("data-product-id"), ".grid-product__label", host, "jc-ribbon-card");
+    }
+    /* Home-page tiles (starter-site markup, not .grid-product__wrap): id is in the image URL. */
+    var tiles = document.querySelectorAll("a.ins-tile__product-card");
+    for (var j = 0; j < tiles.length; j++) {
+      var tl = tiles[j];
+      var tid = (tl.innerHTML.match(/\/products\/(\d+)\//) || [])[1];
+      var th = tl.querySelector(".ins-tile__product-image");
+      if (tid && th) apply(tl, tid, ".ins-tile__product-label", th, "jc-ribbon-card");
     }
     var pd = document.querySelector(".product-details");
     var page = document.querySelector("[class*='ec-store__product-page--']");
